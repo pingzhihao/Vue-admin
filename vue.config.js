@@ -1,3 +1,5 @@
+const path = require('path')
+const debug = process.env.NODE_ENV !== 'production'
 module.exports = {
   // 项目部署的基础路径
   // 我们默认假设你的应用将会部署在域名的根部，
@@ -54,7 +56,21 @@ module.exports = {
   // 调整内部的 webpack 配置。
   // 查阅 https://github.com/vuejs/vue-docs-zh-cn/blob/master/vue-cli/webpack.md
   chainWebpack: () => {},
-  configureWebpack: () => {},
+  configureWebpack: config => { // webpack配置，值位对象时会合并配置，为方法时会改写配置
+        if (debug) { // 开发环境配置
+            config.devtool = 'cheap-module-eval-source-map'
+        } else { // 生产环境配置
+        }
+         Object.assign(config, { // 开发生产共同配置，配置别名
+             resolve: {
+                 alias: {
+                     '@': path.resolve(__dirname, './src'),
+                     '@c': path.resolve(__dirname, './src/components'),
+                    'vue$': 'vue/dist/vue.esm.js'
+                }
+            }
+         })
+    },
 
   // CSS 相关选项
   css: {
